@@ -9,7 +9,11 @@ use App\Models\Company;
 use App\Models\User;
 
 use Auth;
-use Mail;
+// use Mail;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailDemo;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class CompaniesController extends Controller
@@ -50,6 +54,14 @@ class CompaniesController extends Controller
         return view('companies.create');
     }
 
+    public function detail()
+    {
+        //
+        $user_id = Auth::user()->id;
+        $company_id = Auth::user()->company_id;
+        $company = Company::find($company_id);
+        return view('companies.details', ['company' => $company]);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -102,11 +114,25 @@ class CompaniesController extends Controller
 	    // });
 
         $company->save();
-        Mail::send('companies.dashboard   ', ['company' => $company], function ($m) use ($company) {
-            $m->from('d.njoku@xlafricagroup.com', 'Your Application');
+        // Mail::send('companies.dashboard   ', ['company' => $company], function ($m) use ($company) {
+        //     $m->from('d.njoku@xlafricagroup.com', 'Your Application');
 
-            $m->to($company->email, '')->subject("Congratulations user, you just got registered with company app!  You are truly awesome! ");
-        });
+        //     $m->to($company->email, '')->subject("Congratulations user, you just got registered with company app!  You are truly awesome! ");
+        // });
+
+        //Mailtrap
+        $email = $company->email;
+   
+        $mailData = [
+            'title' => 'Welcome to company app',
+            'url' => 'https://www.companyapp.io'
+        ];
+  
+        Mail::to($email)->send(new EmailDemo($mailData));
+   
+        // return response()->json([
+        //     'message' => 'Congratulations user, you just got registered with company app!  You are truly awesome! '
+        // ], Response::HTTP_OK);
 
         
 
@@ -137,40 +163,43 @@ class CompaniesController extends Controller
         ]);
 
         
-   
-        $logo = $request->file('logo');
-        $input['logo'] = time().'.'.$image->extension();
-      
-        $destinationPath = public_path('/images');
-        $log = ImageResize::make($logo->path());
-        $log->resize(100, 100, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($destinationPath.'/'.$input['logo']);
-    
-        $destinationPath = public_path('/images');
-        $logo->move($destinationPath, $input['logo']);
-  
+        if($request->hasFile('logo')){
+            $logo = $request->file('logo');
+            $input['logo'] = time().'.'.$image->extension();
         
-        //return 123;
-        $company = new Company();       
-        $company->name = $request->input('name');
-        $company->email = $request->input('email');
-        $company->logo = $input['logo'];
-        $company->website = $request->input('website');
-        $company->created_by = auth()->user()->id;
+            $destinationPath = public_path('/images');
+            $log = ImageResize::make($logo->path());
+            $log->resize(100, 100, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'.$input['logo']);
         
-        
-        $company->save();
-
-        if(Auth::user()->role_id == "1"){
-            return redirect('/superadmin/company/create')->with('success','Company Updated Successfully');
-        }elseif(Auth::user()->role_id == "2"){
-            return redirect('/admin/company/create')->with('success','Company Updated Successfully');
+            $destinationPath = public_path('/images');
+            $logo->move($destinationPath, $input['logo']);
+            $fileNameToStore = $input['logo'];
+        } else {
+            $fileNameToStore = 'noimage.jpg';
         }
-        elseif(Auth::user()->role_id == "3"){
-            return redirect('/company/company/create')->with('success','Company Updated Successfully');
-        }  
-    }
+            
+            //return 123;
+            $company = new Company();       
+            $company->name = $request->input('name');
+            $company->email = $request->input('email');
+            $company->logo = $fileNameToStore;
+            $company->website = $request->input('website');
+            $company->created_by = auth()->user()->id;
+            
+            
+            $company->save();
+
+            if(Auth::user()->role_id == "1"){
+                return redirect('/superadmin/company/create')->with('success','Company Updated Successfully');
+            }elseif(Auth::user()->role_id == "2"){
+                return redirect('/admin/company/create')->with('success','Company Updated Successfully');
+            }
+            elseif(Auth::user()->role_id == "3"){
+                return redirect('/company/company/create')->with('success','Company Updated Successfully');
+            }  
+        }
 
     /**
      * Display the specified resource.
@@ -181,6 +210,19 @@ class CompaniesController extends Controller
     public function show($id)
     {
         //
+        $company = Company::find($id);
+
+        
+        if(Auth::user()->role_id == "1"){
+            return view('companies.show', ['company' => $company]);
+           // return view('employees.show')->with('user', $user);
+            //return redirect('/superadmin/employee/view')->with('success','Employee Created, Add More');
+        }elseif(Auth::user()->role_id = "2"){
+            return view('companies.show', ['company' => $company]);
+            //return view('employees.show')->with('user', $user);
+           // return redirect('/admin/employee/view')->with('success','Employee Created, Add More');
+        }
+        
     }
 
     /**
@@ -192,6 +234,16 @@ class CompaniesController extends Controller
     public function edit($id)
     {
         //
+        $company = Company::find($id);
+
+        //Check for correct user
+        if(Auth::user()->id == "4" || Auth::user()->id == "3")
+        {
+            return redirect('/company/errorpage')->with('error', 'Unauthorized Page');
+
+        }
+
+        return view('companies.edit')->with('company', $company);
     }
 
     /**
@@ -204,6 +256,99 @@ class CompaniesController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required',
+            'logo' => 'image|nullable|max:1999',
+            // 'logo' => 'required',
+            // 'logo.*' => 'mimes:jpeg,jpg,gif,png',
+            'website' => 'required'
+        ]);
+
+        if($request->hasFile('logo')){
+            $logo = $request->file('logo');
+            $input['logo'] = time().'.'.$image->extension();
+        
+            $destinationPath = public_path('/images');
+            $log = ImageResize::make($logo->path());
+            $log->resize(100, 100, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'.$input['logo']);
+        
+            $destinationPath = public_path('/images');
+            $logo->move($destinationPath, $input['logo']);
+            $fileNameToStore = $input['logo'];
+        } else {
+            $fileNameToStore = 'noimage.jpg';
+        }
+            
+            //return 123;
+            $company = Company::find($request->input('company_id'));      
+            $company->name = $request->input('name');
+            $company->email = $request->input('email');
+            $company->logo = $fileNameToStore;
+            $company->website = $request->input('website');
+            //$company->created_by = auth()->user()->id;
+            
+            
+            $company->save();
+
+            if(Auth::user()->role_id == "1"){
+                return redirect('/superadmin/company/create')->with('success','Company Updated Successfully');
+            }elseif(Auth::user()->role_id == "2"){
+                return redirect('/admin/company/create')->with('success','Company Updated Successfully');
+            }
+           
+    }
+
+    public function newupdate(Request $request)
+    {
+        //
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required',
+            'logo' => 'image|nullable|max:1999',
+            // 'logo' => 'required',
+            // 'logo.*' => 'mimes:jpeg,jpg,gif,png',
+            'website' => 'required'
+        ]);
+
+        
+        if($request->hasFile('logo')){
+            $logo = $request->file('logo');
+            $input['logo'] = time().'.'.$image->extension();
+        
+            $destinationPath = public_path('/images');
+            $log = ImageResize::make($logo->path());
+            $log->resize(100, 100, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath.'/'.$input['logo']);
+        
+            $destinationPath = public_path('/images');
+            $logo->move($destinationPath, $input['logo']);
+            $fileNameToStore = $input['logo'];
+        } else {
+            $fileNameToStore = 'noimage.jpg';
+        }
+            
+            //return 123;
+            //$company = new Company(); 
+            $company = Company::find($request->input('company_id'));      
+            $company->name = $request->input('name');
+            $company->email = $request->input('email');
+            $company->logo = $fileNameToStore;
+            $company->website = $request->input('website');
+            //$company->created_by = auth()->user()->id;
+            
+            
+            $company->save();
+
+            if(Auth::user()->role_id == "1"){
+                return redirect('/superadmin/company/create')->with('success','Company Updated Successfully');
+            }elseif(Auth::user()->role_id == "2"){
+                return redirect('/admin/company/create')->with('success','Company Updated Successfully');
+            }
+             
     }
 
     /**
@@ -215,5 +360,41 @@ class CompaniesController extends Controller
     public function destroy($id)
     {
         //
+        $company = Company::find($id);
+        //Check for correct user
+        if(Auth::user()->id == "4" || Auth::user()->id == "3")
+        {
+            return redirect('/company/errorpage')->with('error', 'Unauthorized Page');
+
+        }
+        
+        $company->delete();
+       // return redirect('/user')->with('success','Employee Removed');
+        if(Auth::user()->role_id == "1"){
+            return redirect('/superadmin/company/create')->with('success','Company Removed');
+        }elseif(Auth::user()->role_id == "2"){
+            return redirect('/admin/company/create')->with('success','Company Removed');
+        }
+    }
+
+    public function newdestroy(Request $request)
+    {
+        //
+        $company = Company::find($request->input('company_id'));
+        //Check for correct user
+        if(Auth::user()->id == "4" || Auth::user()->id == "3")
+        {
+            return redirect('/company/errorpage')->with('error', 'Unauthorized Page');
+
+        }
+        
+        $company->delete();
+       // return redirect('/user')->with('success','Employee Removed');
+        if(Auth::user()->role_id == "1"){
+            return redirect('/superadmin/company/create')->with('success','Company Removed');
+        }elseif(Auth::user()->role_id == "2"){
+            return redirect('/admin/company/create')->with('success','Company Removed');
+        }
+        
     }
 }

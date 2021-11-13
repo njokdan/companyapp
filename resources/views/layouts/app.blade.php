@@ -46,11 +46,11 @@
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
+                            {{-- @if (Route::has('register'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
-                            @endif
+                            @endif --}}
                         @else
                             <li class="nav-item">
                                 
@@ -64,7 +64,7 @@
                                         <a class="nav-link" href="{{ url('company/company/detail') }}">{{ __('Company Details') }}</a>
                                     @endif
                                     @if(Auth::user()->role_id==4)
-                                        <a class="nav-link" href="{{ url('Employee/company/detail') }}">{{ __('Company Details') }}</a>
+                                        <a class="nav-link" href="{{ url('employee/company/detail') }}">{{ __('Company Details') }}</a>
                                     @endif
                                 
                             </li>
