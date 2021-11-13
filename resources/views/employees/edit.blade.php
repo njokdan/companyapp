@@ -20,7 +20,8 @@
         </div>
         <div class="form-group">
             {{Form::label('title', 'Role:')}}
-            {{Form::select('role_id', array('1' => 'superadmin', '2' => 'admin', '3' => 'company', '4' => 'employee'), $user->role_id, ['class' => 'form-control'])}}
+             {!! Form::select('role_id', $roles, $user->role_id, ['class' => 'form-control']) !!}
+            {{-- {{Form::select('role_id', array('1' => 'superadmin', '2' => 'admin', '3' => 'company', '4' => 'employee'), $user->role_id, ['class' => 'form-control'])}} --}}
         </div>
         <div class="form-group">
             {{Form::label('title', 'First Name:')}}
@@ -32,7 +33,8 @@
         </div>
         <div class="form-group">
             {{Form::label('title', 'Company:')}}
-            {{Form::select('company', array('1' => 'compa', '2' => 'compb', '3' => 'compc', '4' => 'compd'), $user->company, ['class' => 'form-control'])}}
+            {!! Form::select('company_id', $companies, $user->company_id, ['class' => 'form-control']) !!}
+            {{-- {{Form::select('company', array('1' => 'compa', '2' => 'compb', '3' => 'compc', '4' => 'compd'), $user->company, ['class' => 'form-control'])}} --}}
         </div>
         <div class="form-group">
             {{Form::label('title', 'Email:')}}

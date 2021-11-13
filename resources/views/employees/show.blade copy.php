@@ -3,8 +3,8 @@
 @section('content')
 <a href="/companies" class="btn btn-default">Go Back</a>
     <h1>{{$company->title}}</h1>
-    <img style="width:100%" src="/storage/cover_images/{{$company->logo}}">
-    <img style="width:100%" src="{{$post->logo_path}}">
+    <img style="width:100%" src="/storage/logo/{{$company->logo}}">
+    <!-- <img style="width:100%" src="{{$post->logo_path}}"> -->
     <br><br>
     <div>
         {!!$company->email!!}
@@ -17,7 +17,7 @@
         <!-- Hence, Can Only delete or edit your own post -->
         @if(Auth::user()->id === $company->user_id)
             <hr>
-            <a href="/companies/{{$company->id}}/edit" class="btn btn-default">Edit</a>
+            <a href="/companies/employee/{{$company->id}}/edit" class="btn btn-default">Edit</a>
             {!!Form::open(['action' => ['CompaniesController@destroy', $company->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
                 {{Form::hidden('_method','DELETE')}}
                 {{Form::submit('Delete',['class' => 'btn btn-danger'])}}

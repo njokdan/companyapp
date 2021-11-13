@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\Company;
 use Auth;
 
 use DB;//direct mysql
@@ -24,7 +26,8 @@ class EmployeesController extends Controller
     public function index()
     {
         //
-       
+        //$companies =  Company::orderBy('created_at','asc');
+        
         $users = User::orderBy('created_at','desc')->paginate(3);
         
         if(Auth::user()->role_id == "1"){
@@ -45,8 +48,10 @@ class EmployeesController extends Controller
     public function create()
     {
         //
-
-        return view('employees.create');
+        $roles = Role::pluck('role_name', 'role_id');
+        $companies = Company::pluck('name', 'id');
+        // return view('employees.create');
+        return view('employees.create', ['companies' => $companies, 'roles' => $roles]);
     }
 
     /**
@@ -86,12 +91,12 @@ class EmployeesController extends Controller
         $user->save();
 
         if(Auth::user()->role_id == "1"){
-            return redirect('/superadmin/employee/create')->with('success','Employee Updated Successfully');
+            return redirect('/superadmin/dashboard')->with('success','Employee Created Successfully');
         }elseif(Auth::user()->role_id == "2"){
-            return redirect('/admin/employee/create')->with('success','Employee Updated Successfully');
+            return redirect('/admin/dashboard')->with('success','Employee Created Successfully');
         }
         elseif(Auth::user()->role_id == "3"){
-            return redirect('/company/employee/create')->with('success','Employee Updated Successfully');
+            return redirect('/company/dashboard')->with('success','Employee Created Successfully');
         }  
         
     }
@@ -133,6 +138,8 @@ class EmployeesController extends Controller
     public function edit($id)
     {
         //
+        $roles = Role::pluck('role_name', 'role_id');
+        $companies = Company::pluck('name', 'id');
         $user = User::find($id);
 
         //Check for correct user
@@ -142,7 +149,8 @@ class EmployeesController extends Controller
 
         }
 
-        return view('employees.edit')->with('user', $user);
+        //return view('employees.edit')->with('user', $user);
+        return view('employees.edit', ['user' => $user,'companies' => $companies, 'roles' => $roles]);
     }
 
     /**
@@ -175,18 +183,18 @@ class EmployeesController extends Controller
         $user->company_id = $request->input('company_id');
         $user->email = $request->input('email');
         $user->phone = $request->input('phone');
-        $user->password = bcrypt('password');
+        //$user->password = bcrypt('password');
         // $user->created_by = auth()->user()->id;
         
         $user->save();
 
         if(Auth::user()->role_id == "1"){
-            return redirect('/superadmin/employee/create')->with('success','Employee Created, Add More');
+            return redirect('/superadmin/dashboard')->with('success','Employee Updated');
         }elseif(Auth::user()->role_id == "2"){
-            return redirect('/admin/employee/create')->with('success','Employee Created, Add More');
+            return redirect('/admin/dashboard')->with('success','Employee Updated');
         }
         elseif(Auth::user()->role_id == "3"){
-            return redirect('/company/employee/create')->with('success','Employee Created, Add More');
+            return redirect('/company/dashboard')->with('success','Employee Updated');
         }  
     }
 
@@ -226,12 +234,12 @@ class EmployeesController extends Controller
         $user->save();
 
         if(Auth::user()->role_id == "1"){
-            return redirect('/superadmin/dashboard')->with('success','Employee Created, Add More');
+            return redirect('/superadmin/dashboard')->with('success','Employee Updated');
         }elseif(Auth::user()->role_id == "2"){
-            return redirect('/admin/dashboard')->with('success','Employee Created, Add More');
+            return redirect('/admin/dashboard')->with('success','Employee Updated');
         }
         elseif(Auth::user()->role_id == "3"){
-            return redirect('/company/dashboard')->with('success','Employee Created, Add More');
+            return redirect('/company/dashboard')->with('success','Employee Updated');
         }  
     }
 

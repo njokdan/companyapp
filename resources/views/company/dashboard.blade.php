@@ -17,7 +17,7 @@
                                     {{-- <img style="width:100%" src="{{$post->logo_path}}"> --}}
                                 </div>
                                 <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/superadmin/{{$company->id}}/show">{{$company->name}} - {{$company->email}} {{$company->website}}</a></h3>
+                                    <h3><a href="/superadmin/company/{{$company->id}}/show">{{$company->name}} - {{$company->email}} {{$company->website}}</a></h3>
                                     <small>Created on {{$company->created_at}} By {{$company->created_by}}</small>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                                     {{-- <img style="width:100%" src="{{$post->logo_path}}"> --}}
                                 </div>
                                 <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/admin/{{$company->id}}/show">{{$company->name}} - {{$company->email}} {{$company->website}}</a></h3>
+                                    <h3><a href="/admin/company/{{$company->id}}/show">{{$company->name}} - {{$company->email}} {{$company->website}}</a></h3>
                                     <small>Created on {{$company->created_at}} By {{$company->created_by}}</small>
                                     
                                 </div>

@@ -4,15 +4,15 @@
 <div class="container">
 <a href="/companies" class="btn btn-default">Go Back</a>
     <h1>{{$company->name}}</h1>
-    <img style="width:100%" src="/storage/cover_images/{{$company->logo}}">
-    <img style="width:100%" src="{{$post->logo_path}}">
+    <img style="width:25%" src="/storage/logo/{{$company->logo}}">
+    {{-- <img style="width:100%" src="{{$company->logo_path}}"> --}}
     <br><br>
     <div>
 
         {!!$company->email!!}-{!!$company->website!!}
     </div>
     <hr>
-    <small>Written on {{$company->created_at}} By {{$company->user->name}}</small>
+    <small>Created on {{$company->created_at}} By {{$company->created_by}}</small>
     <!-- Block against user not signed in -->
     @if(!Auth::guest())
         <!-- Block against user signed in but company restricted to user -->
@@ -20,7 +20,7 @@
         {{-- @if(Auth::user()->id === $company->user_id) --}}
             <hr>
             @if(Auth::user()->role_id==1)
-                <a href="/superadmin/{{$company->id}}/edit" class="btn btn-primary ">Edit</a>
+                <a href="/superadmin/company/{{$company->id}}/edit" class="btn btn-primary ">Edit</a>
                 {!!Form::open(['action' => 'Company\CompaniesController@newdestroy', 'method' => 'POST', 'class' => 'pull-right'])!!}
             
                     {{Form::hidden('company_id',$company->id)}}

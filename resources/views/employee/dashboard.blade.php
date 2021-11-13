@@ -39,8 +39,8 @@
                                             {{-- <img style="width:100%" src="{{$user->logo_path}}"> --}}
                                         {{-- </div> --}}
                                         <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/superadmin/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
-                                    <small>Written on {{$user->created_at}} By {{$user->firstname}}</small>
+                                    <h3><a href="/superadmin/employee/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
+                                    <small>Created on {{$user->created_at}}</small>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                             {{-- <img style="width:100%" src="{{$user->logo_path}}"> --}}
                                         {{-- </div> --}}
                                 <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/admin/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
+                                    <h3><a href="/admin/employee/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
                                     <small>Written on {{$user->created_at}} By {{$user->firstname}}</small>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                             {{-- <img style="width:100%" src="{{$user->logo_path}}"> --}}
                                         {{-- </div> --}}
                                         <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/company/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
+                                    <h3><a href="/company/employee/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
                                     <small>Written on {{$user->created_at}} By {{$user->firstname}}</small>
                                 </div>
                             </div>
@@ -81,7 +81,7 @@
                                             {{-- <img style="width:100%" src="{{$user->logo_path}}"> --}}
                                         {{-- </div> --}}
                                         <div class="col-md-8 col-sm-8">
-                                    <h3><a href="/employee/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
+                                    <h3><a href="/employee/employee/{{$user->id}}/show">{{$user->firstname}} {{$user->lastname}}</a></h3>
                                     <small>Written on {{$user->created_at}} By {{$user->firstname}}</small>
                                 </div>
                             </div>

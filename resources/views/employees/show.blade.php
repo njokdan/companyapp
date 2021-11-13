@@ -4,8 +4,6 @@
 <div class="container">
 {{-- <a href="/companies" class="btn btn-default">Go Back</a> --}}
     <h1>{{$user->firstname}} {{$user->lastname}} </h1>
-    {{-- <img style="width:100%" src="/storage/cover_images/{{$company->logo}}">
-    <img style="width:100%" src="{{$post->logo_path}}"> --}}
     <br><br>
     <div>
         {!!$user->email!!}
@@ -23,7 +21,7 @@
         @if(Auth::user()->role_id != "4")
             <hr>
             @if(Auth::user()->role_id==1)
-                <a href="/superadmin/{{$user->id}}/edit" class="btn btn-primary ">Edit</a>
+                <a href="/superadmin/employee/{{$user->id}}/edit" class="btn btn-primary ">Edit</a>
                 {!!Form::open(['action' =>'Employee\EmployeesController@newdestroy', 'method' => 'POST', 'enctype' => 'multipart/form-data'])!!}
                     {{Form::hidden('user_id',$user->id)}}
                     {{Form::submit('remove',['class' => 'btn btn-danger'])}}

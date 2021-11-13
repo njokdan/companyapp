@@ -165,15 +165,15 @@ class CompaniesController extends Controller
         
         if($request->hasFile('logo')){
             $logo = $request->file('logo');
-            $input['logo'] = time().'.'.$image->extension();
+            $input['logo'] = time().'.'.$logo->extension();
         
-            $destinationPath = public_path('/images');
+            $destinationPath = public_path('/public/logo');
             $log = ImageResize::make($logo->path());
             $log->resize(100, 100, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($destinationPath.'/'.$input['logo']);
         
-            $destinationPath = public_path('/images');
+            $destinationPath = public_path('/public/logo');
             $logo->move($destinationPath, $input['logo']);
             $fileNameToStore = $input['logo'];
         } else {
@@ -267,15 +267,15 @@ class CompaniesController extends Controller
 
         if($request->hasFile('logo')){
             $logo = $request->file('logo');
-            $input['logo'] = time().'.'.$image->extension();
+            $input['logo'] = time().'.'.$logo->extension();
         
-            $destinationPath = public_path('/images');
+            $destinationPath = public_path('/logo');
             $log = ImageResize::make($logo->path());
             $log->resize(100, 100, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($destinationPath.'/'.$input['logo']);
         
-            $destinationPath = public_path('/images');
+            $destinationPath = public_path('/logo');
             $logo->move($destinationPath, $input['logo']);
             $fileNameToStore = $input['logo'];
         } else {
@@ -315,21 +315,21 @@ class CompaniesController extends Controller
 
         
         if($request->hasFile('logo')){
-            $logo = $request->file('logo');
-            $input['logo'] = time().'.'.$image->extension();
-        
-            $destinationPath = public_path('/images');
-            $log = ImageResize::make($logo->path());
-            $log->resize(100, 100, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($destinationPath.'/'.$input['logo']);
-        
-            $destinationPath = public_path('/images');
-            $logo->move($destinationPath, $input['logo']);
-            $fileNameToStore = $input['logo'];
+            // Get filename with the extension
+            $filenameWithExt = $request->file('logo')->getClientOriginalName();
+            //Get Just Filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            //Get Just Extension
+            $extension = $request->file('logo')->getClientOriginalExtension();
+            //Filename to store
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            //Upload the image
+            
+            $path = $request->file('logo')->storeAs('public/logo', $fileNameToStore);
+           
         } else {
             $fileNameToStore = 'noimage.jpg';
-        }
+        }  
             
             //return 123;
             //$company = new Company(); 
