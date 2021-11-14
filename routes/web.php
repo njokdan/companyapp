@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 // Route::get('/', 'CompaniesController@index');
 
 // Route::get('/about', 'CompaniesController@about');
